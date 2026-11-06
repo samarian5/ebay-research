@@ -52,7 +52,7 @@ def ingest(run_id: str, keyword: str, rows: list[dict], batch: int = 150) -> int
 
 
 def upsert_run(meta: dict) -> None:
-    r = requests.post(f"{URL}/rest/v1/eb_runs", headers={**_headers(),
+    r = requests.post(f"{URL}/rest/v1/eb_runs?on_conflict=run_id", headers={**_headers(),
                       "Prefer": "resolution=merge-duplicates,return=minimal"},
                       data=json.dumps([meta]), timeout=30)
     if r.status_code >= 300:
