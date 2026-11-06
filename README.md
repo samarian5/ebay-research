@@ -4,11 +4,26 @@ Answers "what should I sell next on eBay?" per keyword, from data a signed-out c
 actually reach. Sibling of `/home/pc/etsy-scraper`, sharing its shape — GitHub Actions,
 Supabase queue, static web board — and none of its sealed-artifact machinery.
 
-**Status:** stack built and wired. Schema live in Supabase, parser tested against a real
-capture, queue + ingest + anon-read verified end to end, web board rendering live rows.
-**One thing is not done: the crawl has never run in GitHub Actions from this repo**, because
-this machine has no GitHub credentials (no `gh`, no SSH key, no PAT). Everything is packaged
-for one command once a token exists.
+**Status:** **live in the cloud.** https://samarian5.github.io/ebay-research/ — static board on
+GitHub Pages, crawler on GitHub Actions (`samarian5/ebay-research`, public), data and queue in
+Supabase. Nothing runs on a laptop. Provisioned through Composio's authenticated GitHub proxy;
+no PAT and no device login.
+
+Four live laps have run: 478 listings from `vintage band tee` (10/10 pages) and 627 across
+`funny tshirt` (pages 1–10). Two defects were found by those runs and fixed — see the
+amendment in [ADR 0001](docs/adr/0001-active-surface-signed-out.md).
+
+## Measured in production (2026-11-06)
+
+| Fact | Measurement |
+|---|---|
+| Pages per keyword | 10 × 60 cards, ~60–90 s per keyword |
+| Cheap lane (`curl_cffi`) block rate | **4 of 10 pages** returned `403`, one lap **4 of 4** |
+| Browser lane (SeleniumBase CDP) | recovered **every** blocked page; one `ProtocolException` crash |
+| Unique listings per keyword lap | 478 (vintage band tee), 627 cumulative (funny tshirt) |
+| Badge coverage | 5 of 540 stored listings on `funny tshirt` — gate says *unmeasured* |
+| Supabase `pg_net` fetch of eBay | **403**, 1,738-byte error page (headers made no difference) |
+| Whole-job wall time | ~4 min including dependency + Chrome install |
 
 ## What was proven before designing anything
 
@@ -114,14 +129,21 @@ $PY scripts/push_repo.py                # publish + enable Pages + set secrets
 
 ## Open questions
 
-1. **Badge coverage on real keywords.** 3 of 60 cards on the sampled page. Measure across 10
-   keywords before trusting the leaderboard; if it stays this thin, depth 10 is not enough.
-2. **Attrition under page shuffling.** Best Match reorders between laps, so a listing missing
-   from page 6 may have moved to page 4. The board compares run-level sets, not page numbers,
-   which is right — but the noise floor is still unmeasured.
-3. **Seller competition.** Cards in the capture carry no seller name, so distinct-seller count
-   (what paid tools call competition) needs item-page enrichment. Not built.
-4. **Schedule reliability.** GitHub's scheduler never fired for the Etsy repo on this same
-   account. Verify `event=schedule` in the run list before trusting the 6-hour tick.
-5. **Cluster threshold.** Image-hash similarity needs tuning against real captures; not built,
-   and not needed for any shipped metric.
+1. **Badge coverage is worse than hoped.** 5 of 540 stored listings on `funny tshirt` carry
+   any badge. At that rate a keyword needs ~1,200 listings (depth 20) to clear the Volume
+   Gate of 10 badged listings. Either depth goes up, or the gate stays honest and most
+   keywords display as *unmeasured*.
+2. **Attrition is inflated when a lap spans several runs.** The board compares observation
+   sets of two `succeeded` runs; when pages 1–6 and 7–10 land in different runs, the sets
+   barely overlap and attrition reads 83%. It must be computed per *pass* (pages 1..depth),
+   not per run.
+3. **Seller competition is still unbuilt.** Cards carry no seller name, so distinct-seller
+   count needs item-page enrichment — the one metric paid tools have that this board lacks.
+4. **The 6-hourly schedule has never fired.** Every run so far was a manual dispatch. GitHub's
+   scheduler did not fire for the Etsy repo on this account, so verify `event=schedule` within
+   24 h; if it stays at zero, add an external dispatcher.
+5. **Cheap-lane block rate (~40%) is high enough to question pacing.** Raising the gap from
+   ~5 s to ~8 s may convert browser escalations back into HTTP fetches, cutting lap time and
+   Chrome installs.
+6. **Cluster threshold.** Image-hash similarity is unimplemented and unneeded for any shipped
+   metric; leave it until a product-level question demands it.
