@@ -109,7 +109,7 @@ create table if not exists public.eb_runs (
     rows_written  int default 0,
     challenges    int default 0,
     tier          text,
-    duration_s    int,
+    duration_s    numeric(8,1),
     result_count  text,
     pages_done    int,
     slot_depth    int,
