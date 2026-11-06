@@ -36,14 +36,32 @@ def crawl_keyword(keyword: str, pages: int, start_page: int = 1,
     seen: set[str] = set()
     stopped = "depth"
     result_count = None
+    last_good = start_page - 1
     t0 = time.time()
 
     try:
         for page in range(start_page, start_page + pages):
-            html, tier = fetcher.search_page(keyword, page)
-            if result_count is None:
-                result_count = parse_result_count(html)
-            page_rows = parse_search_html(html)
+            page_rows: list[dict] = []
+            tier = "http"
+            # A page that parses to zero cards is a fetch failure, not the end of
+            # results — eBay occasionally hands back a stub page the block detector
+            # does not recognise. Retry once before believing it.
+            for attempt in range(2):
+                html, tier = fetcher.search_page(keyword, page)
+                if result_count is None:
+                    result_count = parse_result_count(html)
+                page_rows = parse_search_html(html)
+                if page_rows:
+                    break
+                print(f"[crawl] {keyword!r} p{page} [{tier}] 0 cards "
+                      f"(attempt {attempt + 1}/2)", flush=True)
+                if attempt == 0:
+                    pace()
+
+            if not page_rows:
+                stopped = "empty_page"
+                break
+
             fresh = [r for r in page_rows if r["eb_id"] not in seen]
             for r in fresh:
                 seen.add(r["eb_id"])
@@ -55,6 +73,7 @@ def crawl_keyword(keyword: str, pages: int, start_page: int = 1,
             if not fresh:
                 stopped = "no_new_items"
                 break
+            last_good = page
             pace()
     except Exception as e:  # noqa: BLE001
         stopped = f"fail:{type(e).__name__}"
@@ -64,6 +83,10 @@ def crawl_keyword(keyword: str, pages: int, start_page: int = 1,
 
     ended = start_page + pages - 1
     pages_done = len({r["page"] for r in rows}) if rows else 0
+
+    # On an empty page, resume AT the failed page next lap instead of skipping the
+    # hole — otherwise every later page of the keyword is lost for that pass.
+    next_page_hint = (last_good + 1) if stopped == "empty_page" else ended + 1
 
     meta = {
         "run_id": run_id,
@@ -81,6 +104,7 @@ def crawl_keyword(keyword: str, pages: int, start_page: int = 1,
         "started_at": datetime.now(timezone.utc).isoformat(),
         "result_count": result_count,
         "pages_done": pages_done,
+        "next_page_hint": next_page_hint,
     }
     return {"rows": rows, "meta": meta}
 
@@ -142,7 +166,7 @@ def main() -> int:
             except Exception as e:  # noqa: BLE001
                 print(f"[db] run-log {keyword!r} (non-fatal): {e}", flush=True)
             try:
-                next_page = int(s["page_to"]) + 1
+                next_page = meta.get("next_page_hint") or (int(s["page_to"]) + 1)
                 supa.finish_slice(keyword, next_page, "queued",
                                   listings=len(rows), pages=meta["pages_done"])
             except Exception as e:  # noqa: BLE001
