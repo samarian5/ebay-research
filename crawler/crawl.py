@@ -129,16 +129,24 @@ def main() -> int:
         meta["slot_depth"] = s["depth"]
 
         if use_db:
+            # Each DB step is isolated: a telemetry failure must never stop the
+            # queue from advancing, or a keyword gets stuck in 'running' forever.
             try:
                 if rows:
                     meta["rows_written"] = supa.ingest(meta["run_id"], keyword, rows)
+            except Exception as e:  # noqa: BLE001
+                print(f"[db] ingest {keyword!r}: {e}", flush=True)
+                failures += 1
+            try:
                 supa.upsert_run(meta)
+            except Exception as e:  # noqa: BLE001
+                print(f"[db] run-log {keyword!r} (non-fatal): {e}", flush=True)
+            try:
                 next_page = int(s["page_to"]) + 1
-                status = "queued" if next_page <= int(s["depth"]) else "queued"
-                supa.finish_slice(keyword, next_page, status,
+                supa.finish_slice(keyword, next_page, "queued",
                                   listings=len(rows), pages=meta["pages_done"])
             except Exception as e:  # noqa: BLE001
-                print(f"[db] {keyword!r}: {e}", flush=True)
+                print(f"[db] finish-slice {keyword!r}: {e}", flush=True)
                 failures += 1
 
         all_rows.extend(rows)
