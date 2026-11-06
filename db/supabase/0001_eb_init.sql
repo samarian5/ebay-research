@@ -110,6 +110,9 @@ create table if not exists public.eb_runs (
     challenges    int default 0,
     tier          text,
     duration_s    int,
+    result_count  text,
+    pages_done    int,
+    slot_depth    int,
     started_at    timestamptz,
     finished_at   timestamptz
 );
