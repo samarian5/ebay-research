@@ -48,12 +48,14 @@ def build() -> Path:
     )
 
     if DOCS.exists():
-        shutil.rmtree(DOCS)
-    DOCS.mkdir(parents=True)
+        # Never rmtree the whole folder: docs/adr/ holds the decision records.
+        # Only the built web assets are replaced.
+        pass
+    DOCS.mkdir(parents=True, exist_ok=True)
     for f in ("index.html", "style.css", "app.js", "config.js"):
         shutil.copy2(WEB / f, DOCS / f)
     (DOCS / ".nojekyll").write_text("")
-    print(f"built {DOCS} ({len(list(DOCS.iterdir()))} files)")
+    print(f"built {DOCS} ({len(list(DOCS.iterdir()))} entries)")
     return DOCS
 
 
