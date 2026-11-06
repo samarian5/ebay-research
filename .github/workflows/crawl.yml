@@ -1,0 +1,80 @@
+name: ebay-crawl
+
+# Two-day cadence lives in the DB (`eb_keywords.due_at`), not here: this fires
+# often and cheaply, claims whatever is actually due, and exits in seconds when
+# nothing is. Keywords never travel through workflow inputs, so they stay out of
+# run logs (ADR 0004).
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      pages:
+        description: "pages per slice (default: whatever the keyword's depth allows)"
+        required: false
+        default: ""
+
+concurrency:
+  group: ebay-crawl
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Chrome (fallback lane only)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq chromium-browser xvfb >/dev/null 2>&1 || \
+            sudo apt-get install -y -qq chromium xvfb >/dev/null 2>&1 || true
+          echo "BROWSER_BIN=$(command -v chromium-browser || command -v chromium || echo '')" >> "$GITHUB_ENV"
+
+      - name: Crawl due keywords
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          PYTHONUNBUFFERED: "1"
+        run: |
+          set -o pipefail
+          timeout 2100 xvfb-run -a python crawler/crawl.py \
+            ${{ inputs.pages && format('--pages {0}', inputs.pages) || '' }} 2>&1 | tee crawl.log
+
+      - name: Summary
+        if: always()
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, pathlib
+          p = pathlib.Path("out/meta.json")
+          if not p.exists():
+              print("no slices claimed this run")
+              raise SystemExit
+          for m in json.loads(p.read_text()):
+              print(f"- **{m['keyword']}** — {m['listings']} listings, "
+                    f"{m['stopped_reason']}, tier={m['tier']}, "
+                    f"{m['duration_s']}s, {m['challenges']} challenge(s)")
+          PY
+
+      - name: Upload rows
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rows-${{ github.run_id }}
+          path: out/
+          retention-days: 3
+          if-no-files-found: ignore

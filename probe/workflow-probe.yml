@@ -1,0 +1,96 @@
+name: ebay-probe
+
+# One question, two tiers: can a GitHub-hosted runner reach eBay's search pages
+# at all, and does the sold surface still print sold rows?
+#
+# Tier 1 (http)    - curl_cffi TLS impersonation + cookie warm-up.
+# Tier 2 (browser) - SeleniumBase CDP mode, headed Chrome under Xvfb, warm profile.
+#
+# Both dump raw HTML as artifacts so the parser gets built against a real capture
+# instead of synthetic markup. Exit code 2 means "reached the site but no sold
+# rows" - that is a finding, not a failure, so the job is allowed to continue.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  http:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Egress identity
+        run: |
+          echo -n "ipinfo: "; curl -s --max-time 20 https://ipinfo.io/json | tr -d '\n'; echo
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install curl_cffi
+        run: python -m pip install --quiet "curl_cffi>=0.7"
+
+      - name: Tier 1 - TLS-impersonated HTTP
+        run: |
+          set +e
+          python probe/probe_http.py
+          echo "exit=$?"
+          set -e
+
+      - name: Upload http captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe-http
+          path: out/
+          if-no-files-found: warn
+          retention-days: 3
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PROFILE_DIR: ${{ github.workspace }}/.ebay-profile
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install system deps
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb
+          if ! command -v google-chrome >/dev/null 2>&1; then
+            npx --yes @puppeteer/browsers install chrome@stable --path "$RUNNER_TEMP/chrome"
+          fi
+          (command -v google-chrome && google-chrome --version) || true
+
+      - name: Install seleniumbase
+        run: python -m pip install --quiet "seleniumbase>=4.40"
+
+      - name: Tier 2 - headed Chrome under Xvfb
+        run: |
+          CHROME_BIN="$(command -v google-chrome || find "$RUNNER_TEMP/chrome" -name chrome -type f | head -1)"
+          echo "chrome: $CHROME_BIN"
+          export BROWSER_BIN="$CHROME_BIN"
+          set +e
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" python probe/probe_browser.py
+          echo "exit=$?"
+          set -e
+
+      - name: Upload browser captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe-browser
+          path: out/
+          if-no-files-found: warn
+          retention-days: 3

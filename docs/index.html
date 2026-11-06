@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0b0f14" />
+<title>eBay Opportunity Board</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='13' fill='%233ddc97'/></svg>" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="bar">
+  <div class="brand">
+    <span class="dot"></span>
+    <h1>Opportunity Board</h1>
+  </div>
+  <div class="bar-right">
+    <span id="sync" class="muted small">loading…</span>
+    <button id="refresh" class="icon" title="Refresh">↻</button>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-view="board">Keywords</button>
+  <button class="tab" data-view="add">Add keyword</button>
+</nav>
+
+<main>
+  <!-- ───────────────────────── keyword leaderboard ───────────────────────── -->
+  <section id="view-board" class="view">
+    <div class="controls">
+      <input id="kw-filter" type="search" placeholder="Filter keywords…" autocomplete="off" />
+      <select id="board-sort">
+        <option value="units_per_day">Sort: units/day</option>
+        <option value="total_units">Sort: lifetime units</option>
+        <option value="attrition">Sort: attrition</option>
+        <option value="median_price">Sort: median price</option>
+        <option value="keyword">Sort: A–Z</option>
+      </select>
+    </div>
+    <p class="hint" id="board-hint"></p>
+    <div id="board" class="board"></div>
+    <div id="board-empty" class="empty hidden">
+      <p class="empty-title">No keywords yet</p>
+      <p class="muted">Add one in the <b>Add keyword</b> tab. The crawler picks it up on the next lap.</p>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── keyword detail ───────────────────────── -->
+  <section id="view-detail" class="view hidden">
+    <button id="back" class="back">← Keywords</button>
+    <h2 id="d-kw" class="d-title"></h2>
+    <div id="d-stats" class="stats"></div>
+    <div class="controls">
+      <input id="item-filter" type="search" placeholder="Filter listings…" autocomplete="off" />
+      <select id="item-sort">
+        <option value="units_badge">Sort: units sold</option>
+        <option value="watchers">Sort: watchers</option>
+        <option value="price_asc">Sort: price ↑</option>
+        <option value="price_desc">Sort: price ↓</option>
+        <option value="last_seen">Sort: last seen</option>
+      </select>
+    </div>
+    <div id="items" class="grid"></div>
+    <div id="items-empty" class="empty hidden">
+      <p class="empty-title">No listings stored yet</p>
+      <p class="muted">This keyword is queued. Rows appear after the next crawl lap.</p>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── add keyword ───────────────────────── -->
+  <section id="view-add" class="view hidden">
+    <form id="add-form" class="card form">
+      <label>Keyword
+        <input name="keyword" required placeholder="e.g. funny tshirt" autocomplete="off" />
+      </label>
+      <div class="row">
+        <label>Depth (pages × 60)
+          <input name="depth" type="number" value="10" min="1" max="40" />
+        </label>
+        <label>Re-crawl every
+          <select name="interval">
+            <option value="24">24 hours</option>
+            <option value="48" selected>48 hours</option>
+            <option value="72">3 days</option>
+            <option value="168">7 days</option>
+          </select>
+        </label>
+      </div>
+      <label id="token-row">Write token
+        <input name="token" type="password" placeholder="paste once, stored on this device" autocomplete="off" />
+      </label>
+      <button type="submit" class="primary">Queue keyword</button>
+      <p id="add-msg" class="msg"></p>
+    </form>
+
+    <div class="card">
+      <h3>What this board measures</h3>
+      <ul class="notes">
+        <li><b>Active market only</b> — New + Buy It Now, logged out. Sold search and auctions are out of scope.</li>
+        <li><b>Units</b> come from eBay's <code>63+ sold</code> badges, which are a <i>floor</i>, not an exact count.</li>
+        <li><b>units/day</b> needs two laps: it is the badge gain between runs divided by elapsed days.</li>
+        <li><b>Volume gate</b> — a keyword with fewer than 10 badged listings is marked <i>unmeasured</i> and is never ranked.</li>
+        <li><b>Attrition</b> — share of last lap's listings that vanished from this lap. High attrition plus low units means the niche churns.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Manage keywords</h3>
+      <div id="manage" class="manage"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <span id="foot-note" class="muted small"></span>
+</footer>
+
+<div id="toast" class="toast hidden"></div>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
