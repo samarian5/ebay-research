@@ -39,28 +39,43 @@ def crawl_keyword(keyword: str, pages: int, start_page: int = 1,
     last_good = start_page - 1
     t0 = time.time()
 
+    page_errors = 0
     try:
         for page in range(start_page, start_page + pages):
             page_rows: list[dict] = []
             tier = "http"
-            # A page that parses to zero cards is a fetch failure, not the end of
-            # results — eBay occasionally hands back a stub page the block detector
-            # does not recognise. Retry once before believing it.
+            error = None
+            # A zero-card page, or a lane that throws, is a fetch failure — not the
+            # end of results. Retry once, then skip the page so one bad page cannot
+            # burn the rest of the lap.
             for attempt in range(2):
-                html, tier = fetcher.search_page(keyword, page)
-                if result_count is None:
-                    result_count = parse_result_count(html)
-                page_rows = parse_search_html(html)
-                if page_rows:
-                    break
-                print(f"[crawl] {keyword!r} p{page} [{tier}] 0 cards "
-                      f"(attempt {attempt + 1}/2)", flush=True)
+                try:
+                    html, tier = fetcher.search_page(keyword, page)
+                except Exception as e:  # noqa: BLE001
+                    error = type(e).__name__
+                    page_rows = []
+                    print(f"[crawl] {keyword!r} p{page} lane error {error} "
+                          f"(attempt {attempt + 1}/2)", flush=True)
+                else:
+                    error = None
+                    if result_count is None:
+                        result_count = parse_result_count(html)
+                    page_rows = parse_search_html(html)
+                    if page_rows:
+                        break
+                    print(f"[crawl] {keyword!r} p{page} [{tier}] 0 cards "
+                          f"(attempt {attempt + 1}/2)", flush=True)
                 if attempt == 0:
                     pace()
 
             if not page_rows:
-                stopped = "empty_page"
-                break
+                page_errors += 1
+                print(f"[crawl] {keyword!r} p{page} unreadable — skipped "
+                      f"({page_errors} so far)", flush=True)
+                if page_errors >= 3:
+                    stopped = f"fail:{error}" if error else "unreadable_pages"
+                    break
+                continue
 
             fresh = [r for r in page_rows if r["eb_id"] not in seen]
             for r in fresh:
@@ -84,9 +99,12 @@ def crawl_keyword(keyword: str, pages: int, start_page: int = 1,
     ended = start_page + pages - 1
     pages_done = len({r["page"] for r in rows}) if rows else 0
 
-    # On an empty page, resume AT the failed page next lap instead of skipping the
-    # hole — otherwise every later page of the keyword is lost for that pass.
-    next_page_hint = (last_good + 1) if stopped == "empty_page" else ended + 1
+    # Only a clean finish may advance past the slice. Anything else resumes at the
+    # first page we did not read, so the gap is retried instead of skipped.
+    if stopped in ("depth", "no_new_items"):
+        next_page_hint = ended + 1
+    else:
+        next_page_hint = last_good + 1
 
     meta = {
         "run_id": run_id,
@@ -94,7 +112,8 @@ def crawl_keyword(keyword: str, pages: int, start_page: int = 1,
         "page_from": start_page,
         "page_to": ended,
         "depth": pages,
-        "status": "succeeded" if rows and not stopped.startswith("fail") else "failed",
+        "status": ("succeeded" if rows and stopped in ("depth", "no_new_items")
+                   else "partial" if rows else "failed"),
         "stopped_reason": stopped,
         "listings": len(rows),
         "rows_written": 0,
