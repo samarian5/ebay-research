@@ -51,10 +51,19 @@ def ingest(run_id: str, keyword: str, rows: list[dict], batch: int = 150) -> int
     return total
 
 
+RUN_COLUMNS = {"run_id", "keyword", "page_from", "page_to", "depth", "status",
+               "stopped_reason", "listings", "rows_written", "challenges", "tier",
+               "duration_s", "result_count", "pages_done", "slot_depth",
+               "started_at", "finished_at"}
+
+
 def upsert_run(meta: dict) -> None:
+    # Whitelist: crawler-side hints (e.g. next_page_hint) must never reach the
+    # table, or PostgREST rejects the whole row with PGRST204.
+    row = {k: v for k, v in meta.items() if k in RUN_COLUMNS}
     r = requests.post(f"{URL}/rest/v1/eb_runs?on_conflict=run_id", headers={**_headers(),
                       "Prefer": "resolution=merge-duplicates,return=minimal"},
-                      data=json.dumps([meta]), timeout=30)
+                      data=json.dumps([row]), timeout=30)
     if r.status_code >= 300:
         raise RuntimeError(f"eb_runs upsert -> {r.status_code}: {r.text[:300]}")
 
