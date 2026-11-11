@@ -27,6 +27,8 @@ ASP_CEILING = 30
 ASP_TARGET = 100
 FEE_PCT, FEE_FIXED = 0.1325, 0.30
 SOURCING_RATIO = 0.35          # assumption, labelled in output
+COMMODITY = ("silver round", "silver eagle", "gold coin", "bullion", "melt", "junk silver",
+             "1 oz silver", "999 fine", ".999", "coin lot", "face value")
 AVOID = ("t-shirt", "tshirt", "tee", "shirt", "apparel", "hoodie", "mug", "board game",
          "printer ink", "toner", "damaged", "for parts", "as is")
 
@@ -113,7 +115,10 @@ def score_item(it: dict, vibe: tuple, rivals: int) -> dict:
     # so the profit figure stays blank and the action says so.
     profit_unit = None
     profit_month = None
-    if price and 20 <= price <= 250:
+    commodity = next((c for c in COMMODITY if c in title), None)
+    if commodity:
+        reasons.append(f"commodity ({commodity}) — landed cost tracks spot, not a 35% rule")
+    elif price and 20 <= price <= 250:
         profit_unit = round(price - fee(price) - price * SOURCING_RATIO, 2)
         if uday and uday > 0:
             profit_month = round(profit_unit * uday * 30, 2)
