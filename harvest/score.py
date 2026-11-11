@@ -108,15 +108,23 @@ def score_item(it: dict, vibe: tuple, rivals: int) -> dict:
     weight = {"copy": 1.0, "watch": 0.85, "unmeasured": 0.5, "pass": 0.3}[verdict]
     score = round(100 * (0.55 * demand + 0.30 * econ + 0.15 * min(1.0, units / 200)) * comp * weight, 1)
 
+    # A 35% landed-cost assumption is only meaningful for resellable goods in
+    # Carson's band. For antiques/one-offs above $250 it would invent a margin,
+    # so the profit figure stays blank and the action says so.
     profit_unit = None
     profit_month = None
-    if price:
+    if price and 20 <= price <= 250:
         profit_unit = round(price - fee(price) - price * SOURCING_RATIO, 2)
         if uday and uday > 0:
             profit_month = round(profit_unit * uday * 30, 2)
+    elif price > 250:
+        reasons.append(f"${price:,.0f} is a one-off/collectible — landed cost cannot be assumed")
 
     if price and price < ASP_CEILING:
-        reasons.append(f"median ASP ${price:.0f} is under his $30 ceiling")
+        reasons.append(f"price ${price:.0f} is under his $30 ceiling")
+
+    if price > 250 and action == "copy now":
+        action = "find source first"
 
     return {"item_id": it["item_id"], "verdict": verdict, "action": action, "score": score,
             "demand": round(demand, 3), "economics": round(econ, 3), "competition": round(comp, 3),
@@ -150,7 +158,7 @@ def run(limit: int = 2000) -> dict:
     for r in rows:
         r["scored_at"] = datetime.now(timezone.utc).isoformat()
         r["reasons"] = r["reasons"]          # jsonb accepts a list
-    store.upsert("op_scores", rows, "item_id")
+    store.upsert("op_scores", rows, "item_id", keep_nulls=True)  # full overwrite: a null must clear a stale value
 
     # join back for reporting
     meta = {it["item_id"]: it for it in items}
