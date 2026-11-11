@@ -90,16 +90,17 @@ def enrich(keyword: str, limit: int, fetcher: Fetcher, run_id: str) -> dict:
         f = fetcher.get(ITEM.format(id=item_id))
         if f.blocked:
             blocked += 1
-            store.upsert("op_items", [{"item_id": item_id, "attempts": int(item.get("attempts") or 0) + 1,
-                                       "last_error": f.blocked}], "item_id")
+            store.update("op_items", f"item_id=eq.{item_id}",
+                         {"attempts": int(item.get("attempts") or 0) + 1, "last_error": f.blocked})
             log(f"  [{n}/{len(claimed)}] {item_id} blocked ({f.blocked})")
             continue
         try:
             data = parse_item(f.html, item_id)
         except Exception as e:  # noqa: BLE001
             failed += 1
-            store.upsert("op_items", [{"item_id": item_id, "attempts": int(item.get("attempts") or 0) + 1,
-                                       "last_error": f"parse:{type(e).__name__}"}], "item_id")
+            store.update("op_items", f"item_id=eq.{item_id}",
+                         {"attempts": int(item.get("attempts") or 0) + 1,
+                          "last_error": f"parse:{type(e).__name__}"})
             continue
 
         related = data.pop("related_ids", [])
