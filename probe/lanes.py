@@ -95,6 +95,7 @@ def main() -> None:
                  "browser_bin": os.environ.get("BROWSER_BIN"), "lane1": {}, "lane2": {},
                  "samples": {}}
     f = Fetcher(allow_browser=False)
+    keep: dict[str, str] = {}
 
     for name, url in TARGETS:
         t0 = time.time()
@@ -112,6 +113,8 @@ def main() -> None:
         s = sample(html, name)
         if s:
             res["samples"][name] = s
+        if name == "item_page" and len(html) > 10_000:
+            keep[name] = html
         time.sleep(1.5)
 
     # Lane 2: only worth 90 s if lane 1 was challenged on the item page.
@@ -129,6 +132,17 @@ def main() -> None:
             print(f"[probe] lane2 failed: {type(e).__name__}: {e}", flush=True)
 
     put("lane_probe", res)
+
+    # Keep one real item page (gzipped) so parsers can be written and tested
+    # against actual markup instead of a remembered layout.
+    if keep.get("item_page"):
+        import base64
+        import gzip
+        raw = keep["item_page"].encode()
+        blob = base64.b64encode(gzip.compress(raw, 9)).decode()
+        put("item_html_sample", {"item_id": ITEM_ID, "bytes": len(raw),
+                                 "gzip_b64": blob, "at": res["ran_at"]})
+
 
 
 if __name__ == "__main__":
