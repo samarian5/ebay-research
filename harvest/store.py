@@ -52,6 +52,17 @@ def upsert(table: str, rows: list[dict], conflict: str, chunk: int = 100, keep_n
     return n
 
 
+def update(table: str, match: str, values: dict) -> int:
+    """PATCH an existing row. Used for failure bookkeeping: an upsert here would
+    try to INSERT when the row is missing and trip the NOT NULL url constraint."""
+    r = requests.patch(f"{URL}/rest/v1/{table}?{match}",
+                       headers=_headers({"Prefer": "return=minimal"}),
+                       data=json.dumps(values), timeout=60)
+    if r.status_code >= 300:
+        raise RuntimeError(f"update {table} -> {r.status_code}: {r.text[:300]}")
+    return 1
+
+
 def insert(table: str, rows: list[dict], chunk: int = 200) -> int:
     if not rows:
         return 0
