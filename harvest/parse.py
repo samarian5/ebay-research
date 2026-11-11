@@ -67,6 +67,7 @@ def parse_search(html: str, keyword: str | None = None) -> list[dict[str, Any]]:
         if not item_id.isdigit():
             continue
         title = _t(li.select_one(".s-card__title"))
+        title = re.sub(r"\s*Opens in a new window or tab\s*$", "", title, flags=re.I)
         if not title or title.lower().startswith("shop on ebay"):
             continue
         attrs = [_t(a) for a in li.select(".s-card__attribute-row")]
