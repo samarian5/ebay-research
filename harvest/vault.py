@@ -68,8 +68,9 @@ def write(date: str | None = None) -> str:
             "",
             f"- **Price** {_money(price)} · **watchers** {r.get('watchers') or '—'} · "
             f"**sold** {r.get('units_sold') or '—'} · **avail** {r.get('quantity_n') or '—'}",
-            f"- **Fee** {_money(fee)} → **profit/unit** {_money(r.get('profit_per_unit'))} "
-            f"(at {int(0.35 * 100)}% landed cost, an assumption)",
+            f"- **Fee** {_money(fee)} → **profit/unit** {_money(r.get('profit_per_unit'))}"
+            + (" (at 35% landed cost, an assumption)" if r.get("profit_per_unit") is not None
+               else " (landed cost not assumed for this price band)"),
             f"- **Action** {r.get('action')} · score {r.get('score')}",
             f"- Why: {'; '.join(r.get('reasons') or [])}",
             f"- [Listing]({r.get('url')}) · "
