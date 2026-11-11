@@ -133,15 +133,20 @@ def main() -> None:
 
     put("lane_probe", res)
 
-    # Keep one real item page (gzipped) so parsers can be written and tested
-    # against actual markup instead of a remembered layout.
+    # Keep one real item page (gzipped, chunked) so parsers can be written and
+    # tested against actual markup instead of a remembered layout.
     if keep.get("item_page"):
         import base64
         import gzip
         raw = keep["item_page"].encode()
         blob = base64.b64encode(gzip.compress(raw, 9)).decode()
-        put("item_html_sample", {"item_id": ITEM_ID, "bytes": len(raw),
-                                 "gzip_b64": blob, "at": res["ran_at"]})
+        size = 40_000
+        parts = [blob[i:i + size] for i in range(0, len(blob), size)]
+        put("item_html_meta", {"item_id": ITEM_ID, "bytes": len(raw),
+                               "parts": len(parts), "at": res["ran_at"]})
+        for i, part in enumerate(parts):
+            put(f"item_html_{i}", {"part": i, "b64": part})
+
 
 
 
