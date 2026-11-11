@@ -77,7 +77,7 @@ def q(s: str | None) -> str:
 
 def build(out_path: str = "docs/opportunities.html") -> dict:
     rows = store.select("op_scores?select=*&order=score.desc&limit=1000")
-    items = {i["item_id"]: i for i in store.select("op_items?select=*&limit=5000")}
+    items = {i["item_id"]: i for i in store.select("op_items?select=*&state=eq.enriched&limit=5000")}
     niches = store.select("op_niches?select=*&order=keyword")
     merged = []
     for r in rows:
