@@ -1,0 +1,81 @@
+name: ebay-harvest
+
+# Item-first opportunity harvest. Runs cheaply every 6 h: discovery on the search
+# surface, enrichment on item pages (exact watchers + exact units), then rescore.
+# A blocked lane is recorded in op_runs and the run continues with what it has.
+
+on:
+  schedule:
+    - cron: "10 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      pages:
+        description: "search pages per niche"
+        default: "1"
+      limit:
+        description: "override item pages per niche (0 = niche setting)"
+        default: "0"
+
+concurrency:
+  group: ebay-harvest
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Harvest
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          python -m harvest.run all \
+            --pages "${{ github.event.inputs.pages || '1' }}" \
+            --limit "${{ github.event.inputs.limit || '0' }}"
+          python -m harvest.run stats
+
+      - name: Score and report
+        if: always()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          python -c "from harvest import score; print(score.run())"
+          python -c "from harvest import report; print(report.build('docs/opportunities.html'))"
+
+      - name: Upload outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: opportunities
+          path: |
+            out/opportunities.csv
+            out/scores.json
+            docs/opportunities.html
+          if-no-files-found: ignore
+
+      - name: Publish dashboard
+        if: always()
+        run: |
+          git config user.name  "harvest-bot"
+          git config user.email "harvest-bot@users.noreply.github.com"
+          git add docs/opportunities.html || true
+          if git diff --cached --quiet; then echo "dashboard unchanged"; exit 0; fi
+          git commit -m "harvest: refresh opportunity board [skip ci]"
+          git push
