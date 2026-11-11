@@ -85,6 +85,8 @@ class Fetcher:
             last = Fetched(target, status, html, lane, reason, round(time.time() - t0, 1))
             if not reason:
                 return last
+            if reason == "http_429":          # Google's per-IP quota, not eBay
+                time.sleep(45)
             self._sleep()
 
         for attempt in range(retries):
@@ -97,5 +99,9 @@ class Fetcher:
             last = Fetched(proxied(url), status, html, "proxy", reason, round(time.time() - t0, 1))
             if not reason:
                 return last
-            time.sleep(3 * (attempt + 1))
+            if reason == "http_429":
+                time.sleep(90 * (attempt + 1))   # 90s, then 180s
+            else:
+                time.sleep(3 * (attempt + 1))
         return last or Fetched(url, None, "", "failed", "no_attempt")
+
