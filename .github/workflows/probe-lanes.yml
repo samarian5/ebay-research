@@ -1,0 +1,51 @@
+name: probe-lanes
+
+# One-off access-lane health check. Writes eb_settings.lane_probe.
+# Deliberately isolated from crawl.yml: a probe must never disturb the crawl
+# queue, and its failures must be readable without CI logs (ADR 0004).
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: probe-lanes
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Locate a browser
+        run: |
+          for b in google-chrome google-chrome-stable chromium chromium-browser; do
+            p="$(command -v "$b" || true)"
+            if [ -n "$p" ]; then
+              echo "BROWSER_BIN=$p" >> "$GITHUB_ENV"
+              "$p" --version || true
+              break
+            fi
+          done
+          sudo timeout 150 apt-get update -qq || true
+          sudo timeout 240 apt-get install -y -qq xvfb >/dev/null 2>&1 || true
+
+      - name: Probe lanes
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          xvfb-run -a python -m probe.lanes || true
