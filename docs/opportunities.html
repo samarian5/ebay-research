@@ -1,0 +1,579 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>eBay opportunities — Carson rubric</title><style>
+:root{--bg:#0b0d10;--card:#14181d;--line:#242b33;--fg:#e8edf2;--mut:#8b97a5;--accent:#4ade80;--warn:#fbbf24;--bad:#f87171}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+header{padding:26px 28px 10px;border-bottom:1px solid var(--line)}
+h1{margin:0 0 4px;font-size:20px;letter-spacing:-.2px}
+.sub{color:var(--mut);font-size:13px}
+.kpis{display:flex;gap:26px;padding:16px 28px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.kpi b{display:block;font-size:22px}.kpi span{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+main{padding:20px 28px 60px;max-width:1400px}
+.bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+button{background:var(--card);color:var(--fg);border:1px solid var(--line);padding:6px 12px;border-radius:7px;cursor:pointer;font-size:12px}
+button.on{border-color:var(--accent);color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:26px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mut);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:13px}
+.card h3{margin:0 0 6px;font-size:13px;line-height:1.35;font-weight:600}
+.row{display:flex;gap:10px;flex-wrap:wrap;color:var(--mut);font-size:12px;margin:4px 0}
+.pill{font-size:10.5px;padding:2px 7px;border-radius:20px;border:1px solid var(--line)}
+.copy{color:var(--accent);border-color:var(--accent)}.watch{color:var(--warn);border-color:var(--warn)}
+.pass,.unmeasured{color:var(--bad);border-color:var(--bad)}
+.why{color:var(--mut);font-size:11.5px;margin-top:6px}
+a{color:#93c5fd;text-decoration:none}a:hover{text-decoration:underline}
+.empty{color:var(--mut);padding:30px 0}
+</style></head><body>
+<header><h1>eBay opportunity board</h1>
+<div class="sub">Ranked with Carson Commerce's rubric (watchers ≥ 50 · 50–100 sold on one listing · ASP ≥ $30)
+· generated 2026-11-11 21:47 UTC · 27 enriched listings</div></header>
+<div class="kpis">
+  <div class="kpi"><b>3</b><span>copy candidates</span></div>
+  <div class="kpi"><b>3</b><span>watch</span></div>
+  <div class="kpi"><b>27</b><span>scored</span></div>
+  <div class="kpi"><b>6</b><span>niches</span></div>
+  <div class="kpi"><b>0</b><span>with measured velocity</span></div>
+</div>
+<main>
+<div class="bar">
+  <button class="on" data-f="all">All</button>
+  <button data-f="copy">Copy</button>
+  <button data-f="watch">Watch</button>
+  <button data-f="pass">Pass</button>
+  <input id="minw" placeholder="min watchers" style="background:var(--card);border:1px solid var(--line);color:var(--fg);border-radius:7px;padding:6px 10px;width:120px">
+</div>
+<h2 style="font-size:14px;color:var(--mut);font-weight:500;margin:0 0 8px">Niches</h2>
+<table><thead><tr><th>niche</th><th>scored</th><th>copy</th><th>best score</th></tr></thead><tbody>
+<tr><td>baseball card</td><td>0</td><td>0</td><td>—</td></tr><tr><td>costume jewelry</td><td>0</td><td>0</td><td>—</td></tr><tr><td>enamel pin</td><td>4</td><td>0</td><td>1.9</td></tr><tr><td>pokemon card</td><td>11</td><td>1</td><td>21.7</td></tr><tr><td>sports jersey</td><td>0</td><td>0</td><td>—</td></tr><tr><td>vintage pocket watch</td><td>12</td><td>2</td><td>16.8</td></tr>
+</tbody></table>
+<h2 style="font-size:14px;color:var(--mut);font-weight:500;margin:0 0 10px">Opportunities</h2>
+<div class="grid" id="grid">
+    <div class="card" data-verdict="copy" data-niche="pokemon card" data-watch="106">
+      <div class="row"><span class="pill copy">copy</span>
+        <span class="pill">find source first</span>
+        <span>score <b>21.7</b></span></div>
+      <h3>500+ Pokemon Card Bulk Lot | Free EX/V/VSTAR Rare + Holos | Makes a great gift!!</h3>
+      <div class="row">
+        <span><b>$30</b></span>
+        <span>106 watchers</span>
+        <span>10 sold</span>
+        <span>10 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $4</span>
+        <span>profit/unit <b>$15</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">106 watchers ≥ 50; median ASP $30 is under his $30 ceiling</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/407345153646" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=500%2B+Pokemon+Card+Bulk+Lot+%7C+Free+EX%2FV%2FVSTAR+Rare+%2B+Holos+%7C+Makes+a+great+gift%21%21&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-500%2B+Pokemon+Card+Bulk+Lot+%7C+Free+EX%2FV%2FVSTAR+Rare+%2B+Holos+%7C+Makes+a+great+gift%21%21.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=500%2B+Pokemon+Card+Bulk+Lot+%7C+Free+EX%2FV%2FVSTAR+Rare+%2B+Holos+%7C+Makes+a+great+gift%21%21" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="copy" data-niche="vintage pocket watch" data-watch="253">
+      <div class="row"><span class="pill copy">copy</span>
+        <span class="pill">find source first</span>
+        <span>score <b>16.8</b></span></div>
+      <h3>Antique Brass Pocket watch Victoria 1875 vintage with Leather Box Occasion Gift Opens in a new window or tab</h3>
+      <div class="row">
+        <span><b>$28</b></span>
+        <span>253 watchers</span>
+        <span>58 sold</span>
+        <span>6 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $4</span>
+        <span>profit/unit <b>$14</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">253 watchers ≥ 50; 58 sold on one listing ≥ 50; median ASP $28 is under his $30 ceiling</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/157588557390" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Antique+Brass+Pocket+watch+Victoria+1875+vintage+with+Leather+Box+Occasion+Gift+Opens+in+a&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Antique+Brass+Pocket+watch+Victoria+1875+vintage+with+Leather+Box+Occasion+Gift+Opens+in+a.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Antique+Brass+Pocket+watch+Victoria+1875+vintage+with+Leather+Box+Occasion+Gift+Opens+in+a" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="copy" data-niche="vintage pocket watch" data-watch="66">
+      <div class="row"><span class="pill copy">copy</span>
+        <span class="pill">copy now</span>
+        <span>score <b>16.6</b></span></div>
+      <h3>Antique 1930s ZENITH German Aviation Pilot Award Pocket Watch 45.5mm Working</h3>
+      <div class="row">
+        <span><b>$1,393</b></span>
+        <span>66 watchers</span>
+        <span>— sold</span>
+        <span>— avail</span>
+      </div>
+      <div class="row">
+        <span>fee $185</span>
+        <span>profit/unit <b>$721</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">66 watchers ≥ 50</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/307175455444" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Antique+1930s+ZENITH+German+Aviation+Pilot+Award+Pocket+Watch+45.5mm+Working&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Antique+1930s+ZENITH+German+Aviation+Pilot+Award+Pocket+Watch+45.5mm+Working.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Antique+1930s+ZENITH+German+Aviation+Pilot+Award+Pocket+Watch+45.5mm+Working" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="watch" data-niche="vintage pocket watch" data-watch="33">
+      <div class="row"><span class="pill watch">watch</span>
+        <span class="pill">watch</span>
+        <span>score <b>13.4</b></span></div>
+      <h3>Antique Silver Niello CHRONOGRAPH Pocket Watch 1936 Berlin Olympic Game Football</h3>
+      <div class="row">
+        <span><b>$3,906</b></span>
+        <span>33 watchers</span>
+        <span>— sold</span>
+        <span>— avail</span>
+      </div>
+      <div class="row">
+        <span>fee $518</span>
+        <span>profit/unit <b>$2,021</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">33 watchers / 0 sold — below his 50 gate</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/305947834625" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Antique+Silver+Niello+CHRONOGRAPH+Pocket+Watch+1936+Berlin+Olympic+Game+Football&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Antique+Silver+Niello+CHRONOGRAPH+Pocket+Watch+1936+Berlin+Olympic+Game+Football.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Antique+Silver+Niello+CHRONOGRAPH+Pocket+Watch+1936+Berlin+Olympic+Game+Football" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="watch" data-niche="vintage pocket watch" data-watch="20">
+      <div class="row"><span class="pill watch">watch</span>
+        <span class="pill">watch</span>
+        <span>score <b>12.8</b></span></div>
+      <h3>Antique 19th Century French Masonic 18k Gilt Silver Verge Fusee Pocket Watch</h3>
+      <div class="row">
+        <span><b>$3,164</b></span>
+        <span>20 watchers</span>
+        <span>— sold</span>
+        <span>— avail</span>
+      </div>
+      <div class="row">
+        <span>fee $420</span>
+        <span>profit/unit <b>$1,637</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">20 watchers / 0 sold — below his 50 gate</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/307227741978" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Antique+19th+Century+French+Masonic+18k+Gilt+Silver+Verge+Fusee+Pocket+Watch&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Antique+19th+Century+French+Masonic+18k+Gilt+Silver+Verge+Fusee+Pocket+Watch.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Antique+19th+Century+French+Masonic+18k+Gilt+Silver+Verge+Fusee+Pocket+Watch" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="watch" data-niche="vintage pocket watch" data-watch="42">
+      <div class="row"><span class="pill watch">watch</span>
+        <span class="pill">watch</span>
+        <span>score <b>12.4</b></span></div>
+      <h3>Antique Late 19th C. Memento Mori Solid 800 Silver Pocket Watch – Jump Hour Dial</h3>
+      <div class="row">
+        <span><b>$1,318</b></span>
+        <span>42 watchers</span>
+        <span>— sold</span>
+        <span>— avail</span>
+      </div>
+      <div class="row">
+        <span>fee $175</span>
+        <span>profit/unit <b>$682</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">42 watchers / 0 sold — below his 50 gate</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/327372283233" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Antique+Late+19th+C.+Memento+Mori+Solid+800+Silver+Pocket+Watch+%E2%80%93+Jump+Hour+Dial&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Antique+Late+19th+C.+Memento+Mori+Solid+800+Silver+Pocket+Watch+%E2%80%93+Jump+Hour+Dial.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Antique+Late+19th+C.+Memento+Mori+Solid+800+Silver+Pocket+Watch+%E2%80%93+Jump+Hour+Dial" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="unmeasured" data-niche="vintage pocket watch" data-watch="0">
+      <div class="row"><span class="pill unmeasured">unmeasured</span>
+        <span class="pill">ignore</span>
+        <span>score <b>12.0</b></span></div>
+      <h3>Harley-Davidson &quot;Ride Like Fire&quot; Collector&#x27;s Pocket Watch - Franklin Mint Opens in a new window or tab</h3>
+      <div class="row">
+        <span><b>$45</b></span>
+        <span>— watchers</span>
+        <span>— sold</span>
+        <span>— avail</span>
+      </div>
+      <div class="row">
+        <span>fee $6</span>
+        <span>profit/unit <b>$23</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">no demand signal observed</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/227609991266" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Harley-Davidson+%22Ride+Like+Fire%22+Collector%27s+Pocket+Watch+-+Franklin+Mint+Opens+in+a+new+w&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Harley-Davidson+%22Ride+Like+Fire%22+Collector%27s+Pocket+Watch+-+Franklin+Mint+Opens+in+a+new+w.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Harley-Davidson+%22Ride+Like+Fire%22+Collector%27s+Pocket+Watch+-+Franklin+Mint+Opens+in+a+new+w" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="unmeasured" data-niche="pokemon card" data-watch="16">
+      <div class="row"><span class="pill unmeasured">unmeasured</span>
+        <span class="pill">ignore</span>
+        <span>score <b>9.9</b></span></div>
+      <h3>Pikachu - 136/103 M6a 30th Celebration - Pokemon Card Japanese MEGA [Near Mint]</h3>
+      <div class="row">
+        <span><b>$35</b></span>
+        <span>16 watchers</span>
+        <span>13 sold</span>
+        <span>10 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $5</span>
+        <span>profit/unit <b>$18</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">no demand signal observed</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/398405828294" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Pikachu+-+136%2F103+M6a+30th+Celebration+-+Pokemon+Card+Japanese+MEGA+%5BNear+Mint%5D&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Pikachu+-+136%2F103+M6a+30th+Celebration+-+Pokemon+Card+Japanese+MEGA+%5BNear+Mint%5D.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Pikachu+-+136%2F103+M6a+30th+Celebration+-+Pokemon+Card+Japanese+MEGA+%5BNear+Mint%5D" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="unmeasured" data-niche="pokemon card" data-watch="12">
+      <div class="row"><span class="pill unmeasured">unmeasured</span>
+        <span class="pill">ignore</span>
+        <span>score <b>9.3</b></span></div>
+      <h3>Bulbasaur 001/132 Reverse Holo Stamped 2026 Pokemon Day Promo</h3>
+      <div class="row">
+        <span><b>$35</b></span>
+        <span>12 watchers</span>
+        <span>5 sold</span>
+        <span>3 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $5</span>
+        <span>profit/unit <b>$18</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">no demand signal observed</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/366800569429" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Bulbasaur+001%2F132+Reverse+Holo+Stamped+2026+Pokemon+Day+Promo&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Bulbasaur+001%2F132+Reverse+Holo+Stamped+2026+Pokemon+Day+Promo.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Bulbasaur+001%2F132+Reverse+Holo+Stamped+2026+Pokemon+Day+Promo" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="unmeasured" data-niche="vintage pocket watch" data-watch="13">
+      <div class="row"><span class="pill unmeasured">unmeasured</span>
+        <span class="pill">ignore</span>
+        <span>score <b>7.9</b></span></div>
+      <h3>WWI Military Soldiers Zenith Pocket Watch Fancy Enamel Dial depicting a Battle</h3>
+      <div class="row">
+        <span><b>$870</b></span>
+        <span>13 watchers</span>
+        <span>— sold</span>
+        <span>— avail</span>
+      </div>
+      <div class="row">
+        <span>fee $116</span>
+        <span>profit/unit <b>$450</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">no demand signal observed</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/306297953434" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=WWI+Military+Soldiers+Zenith+Pocket+Watch+Fancy+Enamel+Dial+depicting+a+Battle&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-WWI+Military+Soldiers+Zenith+Pocket+Watch+Fancy+Enamel+Dial+depicting+a+Battle.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=WWI+Military+Soldiers+Zenith+Pocket+Watch+Fancy+Enamel+Dial+depicting+a+Battle" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="unmeasured" data-niche="vintage pocket watch" data-watch="6">
+      <div class="row"><span class="pill unmeasured">unmeasured</span>
+        <span class="pill">ignore</span>
+        <span>score <b>6.9</b></span></div>
+      <h3>Vintage pocket watch With Solid Cover</h3>
+      <div class="row">
+        <span><b>$60</b></span>
+        <span>6 watchers</span>
+        <span>1 sold</span>
+        <span>4 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $8</span>
+        <span>profit/unit <b>$31</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">no demand signal observed</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/147500409478" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Vintage+pocket+watch+With+Solid+Cover&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Vintage+pocket+watch+With+Solid+Cover.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Vintage+pocket+watch+With+Solid+Cover" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="unmeasured" data-niche="vintage pocket watch" data-watch="0">
+      <div class="row"><span class="pill unmeasured">unmeasured</span>
+        <span class="pill">ignore</span>
+        <span>score <b>6.5</b></span></div>
+      <h3>Antique Tsar&#x27;s Era Pocket Watch 14k Gold Enamel for Grand Duchess Olga c1890&#x27;s</h3>
+      <div class="row">
+        <span><b>$5,361</b></span>
+        <span>— watchers</span>
+        <span>— sold</span>
+        <span>— avail</span>
+      </div>
+      <div class="row">
+        <span>fee $711</span>
+        <span>profit/unit <b>$2,774</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">no demand signal observed</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/327416810011" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Antique+Tsar%27s+Era+Pocket+Watch+14k+Gold+Enamel+for+Grand+Duchess+Olga+c1890%27s&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Antique+Tsar%27s+Era+Pocket+Watch+14k+Gold+Enamel+for+Grand+Duchess+Olga+c1890%27s.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Antique+Tsar%27s+Era+Pocket+Watch+14k+Gold+Enamel+for+Grand+Duchess+Olga+c1890%27s" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="unmeasured" data-niche="pokemon card" data-watch="12">
+      <div class="row"><span class="pill unmeasured">unmeasured</span>
+        <span class="pill">ignore</span>
+        <span>score <b>6.5</b></span></div>
+      <h3>Radiant Pokemon Complete 15 Card Set Pokémon S-Chinese K Holo Sword &amp; Shield</h3>
+      <div class="row">
+        <span><b>$69</b></span>
+        <span>12 watchers</span>
+        <span>5 sold</span>
+        <span>5 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $10</span>
+        <span>profit/unit <b>$36</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">no demand signal observed</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/188907566591" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Radiant+Pokemon+Complete+15+Card+Set+Pok%C3%A9mon+S-Chinese+K+Holo+Sword+%26+Shield&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Radiant+Pokemon+Complete+15+Card+Set+Pok%C3%A9mon+S-Chinese+K+Holo+Sword+%26+Shield.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Radiant+Pokemon+Complete+15+Card+Set+Pok%C3%A9mon+S-Chinese+K+Holo+Sword+%26+Shield" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="unmeasured" data-niche="vintage pocket watch" data-watch="13">
+      <div class="row"><span class="pill unmeasured">unmeasured</span>
+        <span class="pill">ignore</span>
+        <span>score <b>6.4</b></span></div>
+      <h3>Lot of 25 Vintage Pocket Watch Bows Assorted Sizes Mixed Metal Tones</h3>
+      <div class="row">
+        <span><b>$35</b></span>
+        <span>13 watchers</span>
+        <span>11 sold</span>
+        <span>4 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $5</span>
+        <span>profit/unit <b>$18</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">no demand signal observed</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/128072660491" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Lot+of+25+Vintage+Pocket+Watch+Bows+Assorted+Sizes+Mixed+Metal+Tones&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Lot+of+25+Vintage+Pocket+Watch+Bows+Assorted+Sizes+Mixed+Metal+Tones.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Lot+of+25+Vintage+Pocket+Watch+Bows+Assorted+Sizes+Mixed+Metal+Tones" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="pass" data-niche="pokemon card" data-watch="28">
+      <div class="row"><span class="pill pass">pass</span>
+        <span class="pill">ignore</span>
+        <span>score <b>3.5</b></span></div>
+      <h3>Mimikyu Pokemon Cards! Holo/Reverse Holo Rares EX V VMAX GX Choose Your Card! Opens in a new window or tab</h3>
+      <div class="row">
+        <span><b>$1</b></span>
+        <span>28 watchers</span>
+        <span>7 sold</span>
+        <span>27 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $0</span>
+        <span>profit/unit <b>$0</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">$1 is under his $20 floor — fee eats it; median ASP $1 is under his $30 ceiling</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/157339795439" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Mimikyu+Pokemon+Cards%21+Holo%2FReverse+Holo+Rares+EX+V+VMAX+GX+Choose+Your+Card%21+Opens+in+a+n&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Mimikyu+Pokemon+Cards%21+Holo%2FReverse+Holo+Rares+EX+V+VMAX+GX+Choose+Your+Card%21+Opens+in+a+n.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Mimikyu+Pokemon+Cards%21+Holo%2FReverse+Holo+Rares+EX+V+VMAX+GX+Choose+Your+Card%21+Opens+in+a+n" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="pass" data-niche="vintage pocket watch" data-watch="25">
+      <div class="row"><span class="pill pass">pass</span>
+        <span class="pill">ignore</span>
+        <span>score <b>2.0</b></span></div>
+      <h3>Lady Liberty Pocket Watch - Double Sided Face - US Eagle Design Opens in a new window or tab</h3>
+      <div class="row">
+        <span><b>$7</b></span>
+        <span>25 watchers</span>
+        <span>34 sold</span>
+        <span>4 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $1</span>
+        <span>profit/unit <b>$3</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">$7 is under his $20 floor — fee eats it; median ASP $7 is under his $30 ceiling</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/128016738658" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Lady+Liberty+Pocket+Watch+-+Double+Sided+Face+-+US+Eagle+Design+Opens+in+a+new+window+or+t&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Lady+Liberty+Pocket+Watch+-+Double+Sided+Face+-+US+Eagle+Design+Opens+in+a+new+window+or+t.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Lady+Liberty+Pocket+Watch+-+Double+Sided+Face+-+US+Eagle+Design+Opens+in+a+new+window+or+t" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="pass" data-niche="enamel pin" data-watch="41">
+      <div class="row"><span class="pill pass">pass</span>
+        <span class="pill">ignore</span>
+        <span>score <b>1.9</b></span></div>
+      <h3>Assorted Enamel Pin Lot 25 pcs random pins collection</h3>
+      <div class="row">
+        <span><b>$20</b></span>
+        <span>41 watchers</span>
+        <span>11 sold</span>
+        <span>8 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $3</span>
+        <span>profit/unit <b>$10</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">$20 is under his $20 floor — fee eats it; median ASP $20 is under his $30 ceiling</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/318499268524" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Assorted+Enamel+Pin+Lot+25+pcs+random+pins+collection&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Assorted+Enamel+Pin+Lot+25+pcs+random+pins+collection.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Assorted+Enamel+Pin+Lot+25+pcs+random+pins+collection" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="pass" data-niche="pokemon card" data-watch="62">
+      <div class="row"><span class="pill pass">pass</span>
+        <span class="pill">ignore</span>
+        <span>score <b>1.4</b></span></div>
+      <h3>Pokemon Glaceon Special Doujin Art Starry Holo Card</h3>
+      <div class="row">
+        <span><b>$6</b></span>
+        <span>62 watchers</span>
+        <span>20 sold</span>
+        <span>10 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $1</span>
+        <span>profit/unit <b>$3</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">$6 is under his $20 floor — fee eats it; median ASP $6 is under his $30 ceiling</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/257663686321" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Pokemon+Glaceon+Special+Doujin+Art+Starry+Holo+Card&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Pokemon+Glaceon+Special+Doujin+Art+Starry+Holo+Card.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Pokemon+Glaceon+Special+Doujin+Art+Starry+Holo+Card" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="pass" data-niche="pokemon card" data-watch="15">
+      <div class="row"><span class="pill pass">pass</span>
+        <span class="pill">ignore</span>
+        <span>score <b>0.7</b></span></div>
+      <h3>Mew V 060/159 SWSH: Crown Zenith Holofoil Pokemon Opens in a new window or tab</h3>
+      <div class="row">
+        <span><b>$6</b></span>
+        <span>15 watchers</span>
+        <span>5 sold</span>
+        <span>2 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $1</span>
+        <span>profit/unit <b>$3</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">$6 is under his $20 floor — fee eats it; median ASP $6 is under his $30 ceiling</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/940076736630" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Mew+V+060%2F159+SWSH%3A+Crown+Zenith+Holofoil+Pokemon+Opens+in+a+new+window+or+tab&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Mew+V+060%2F159+SWSH%3A+Crown+Zenith+Holofoil+Pokemon+Opens+in+a+new+window+or+tab.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Mew+V+060%2F159+SWSH%3A+Crown+Zenith+Holofoil+Pokemon+Opens+in+a+new+window+or+tab" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="pass" data-niche="enamel pin" data-watch="8">
+      <div class="row"><span class="pill pass">pass</span>
+        <span class="pill">ignore</span>
+        <span>score <b>0.5</b></span></div>
+      <h3>Vintage Blue Sheep Brooch Rhinestone Enamel Floral Animal Pin Gold Jewelry Gift</h3>
+      <div class="row">
+        <span><b>$6</b></span>
+        <span>8 watchers</span>
+        <span>6 sold</span>
+        <span>4 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $1</span>
+        <span>profit/unit <b>$3</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">$6 is under his $20 floor — fee eats it; median ASP $6 is under his $30 ceiling</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/820291896961" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Vintage+Blue+Sheep+Brooch+Rhinestone+Enamel+Floral+Animal+Pin+Gold+Jewelry+Gift&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Vintage+Blue+Sheep+Brooch+Rhinestone+Enamel+Floral+Animal+Pin+Gold+Jewelry+Gift.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Vintage+Blue+Sheep+Brooch+Rhinestone+Enamel+Floral+Animal+Pin+Gold+Jewelry+Gift" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="pass" data-niche="enamel pin" data-watch="12">
+      <div class="row"><span class="pill pass">pass</span>
+        <span class="pill">ignore</span>
+        <span>score <b>0.4</b></span></div>
+      <h3>&quot;Sabastian Michaelis&quot; Black Butler Collectible Enamel Pin</h3>
+      <div class="row">
+        <span><b>$7</b></span>
+        <span>12 watchers</span>
+        <span>— sold</span>
+        <span>10 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $1</span>
+        <span>profit/unit <b>$3</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">$7 is under his $20 floor — fee eats it; median ASP $7 is under his $30 ceiling</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/355130856204" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=%22Sabastian+Michaelis%22+Black+Butler+Collectible+Enamel+Pin&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-%22Sabastian+Michaelis%22+Black+Butler+Collectible+Enamel+Pin.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=%22Sabastian+Michaelis%22+Black+Butler+Collectible+Enamel+Pin" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="pass" data-niche="pokemon card" data-watch="12">
+      <div class="row"><span class="pill pass">pass</span>
+        <span class="pill">ignore</span>
+        <span>score <b>0.3</b></span></div>
+      <h3>Zard Holographic Display Full Art Card</h3>
+      <div class="row">
+        <span><b>$6</b></span>
+        <span>12 watchers</span>
+        <span>2 sold</span>
+        <span>4 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $1</span>
+        <span>profit/unit <b>$3</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">$6 is under his $20 floor — fee eats it; median ASP $6 is under his $30 ceiling</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/407349462006" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Zard+Holographic+Display+Full+Art+Card&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Zard+Holographic+Display+Full+Art+Card.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Zard+Holographic+Display+Full+Art+Card" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="pass" data-niche="pokemon card" data-watch="12">
+      <div class="row"><span class="pill pass">pass</span>
+        <span class="pill">ignore</span>
+        <span>score <b>0.3</b></span></div>
+      <h3>Bubble Psyduck Special Doujin Art Starry Holo Card Pokemon</h3>
+      <div class="row">
+        <span><b>$6</b></span>
+        <span>12 watchers</span>
+        <span>5 sold</span>
+        <span>2 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $1</span>
+        <span>profit/unit <b>$3</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">$6 is under his $20 floor — fee eats it; median ASP $6 is under his $30 ceiling</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/840031890213" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Bubble+Psyduck+Special+Doujin+Art+Starry+Holo+Card+Pokemon&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Bubble+Psyduck+Special+Doujin+Art+Starry+Holo+Card+Pokemon.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Bubble+Psyduck+Special+Doujin+Art+Starry+Holo+Card+Pokemon" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="pass" data-niche="vintage pocket watch" data-watch="9">
+      <div class="row"><span class="pill pass">pass</span>
+        <span class="pill">ignore</span>
+        <span>score <b>0.3</b></span></div>
+      <h3>Vintage Gold Pocket Watch with Short Chain Classic 1920s Style Gift -Unisex Opens in a new window or tab</h3>
+      <div class="row">
+        <span><b>$9</b></span>
+        <span>9 watchers</span>
+        <span>6 sold</span>
+        <span>7 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $2</span>
+        <span>profit/unit <b>$5</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">$9 is under his $20 floor — fee eats it; median ASP $9 is under his $30 ceiling</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/267805926027" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Vintage+Gold+Pocket+Watch+with+Short+Chain+Classic+1920s+Style+Gift+-Unisex+Opens+in+a+new&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Vintage+Gold+Pocket+Watch+with+Short+Chain+Classic+1920s+Style+Gift+-Unisex+Opens+in+a+new.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Vintage+Gold+Pocket+Watch+with+Short+Chain+Classic+1920s+Style+Gift+-Unisex+Opens+in+a+new" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="pass" data-niche="pokemon card" data-watch="9">
+      <div class="row"><span class="pill pass">pass</span>
+        <span class="pill">ignore</span>
+        <span>score <b>0.2</b></span></div>
+      <h3>Bubble Arcanine Special Doujin Art Starry Holo Card Pokemon</h3>
+      <div class="row">
+        <span><b>$6</b></span>
+        <span>9 watchers</span>
+        <span>4 sold</span>
+        <span>3 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $1</span>
+        <span>profit/unit <b>$3</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">$6 is under his $20 floor — fee eats it; median ASP $6 is under his $30 ceiling</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/840031974942" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Bubble+Arcanine+Special+Doujin+Art+Starry+Holo+Card+Pokemon&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Bubble+Arcanine+Special+Doujin+Art+Starry+Holo+Card+Pokemon.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Bubble+Arcanine+Special+Doujin+Art+Starry+Holo+Card+Pokemon" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="pass" data-niche="pokemon card" data-watch="13">
+      <div class="row"><span class="pill pass">pass</span>
+        <span class="pill">ignore</span>
+        <span>score <b>0.2</b></span></div>
+      <h3>Dragonite EX Pokemon Card Display Art Card [Details In Description]</h3>
+      <div class="row">
+        <span><b>$4</b></span>
+        <span>13 watchers</span>
+        <span>1 sold</span>
+        <span>3 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $1</span>
+        <span>profit/unit <b>$2</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">$4 is under his $20 floor — fee eats it; median ASP $4 is under his $30 ceiling</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/366743798729" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=Dragonite+EX+Pokemon+Card+Display+Art+Card+%5BDetails+In+Description%5D&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-Dragonite+EX+Pokemon+Card+Display+Art+Card+%5BDetails+In+Description%5D.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=Dragonite+EX+Pokemon+Card+Display+Art+Card+%5BDetails+In+Description%5D" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div>
+    <div class="card" data-verdict="pass" data-niche="enamel pin" data-watch="0">
+      <div class="row"><span class="pill pass">pass</span>
+        <span class="pill">ignore</span>
+        <span>score <b>0.0</b></span></div>
+      <h3>&quot;Saber&quot; Fate/stay night [Unlimited Blade Works] 3&quot; Enamel Character Pin</h3>
+      <div class="row">
+        <span><b>$7</b></span>
+        <span>— watchers</span>
+        <span>— sold</span>
+        <span>10 avail</span>
+      </div>
+      <div class="row">
+        <span>fee $1</span>
+        <span>profit/unit <b>$4</b></span>
+        <span>velocity unknown</span>
+      </div>
+      <div class="why">$7 is under his $20 floor — fee eats it; median ASP $7 is under his $30 ceiling</div>
+      <div class="row" style="margin-top:8px"><a href="https://www.ebay.com/itm/358831247874" target="_blank" rel="noopener">listing</a><a href="https://www.ebay.com/sch/i.html?_nkw=%22Saber%22+Fate%2Fstay+night+%5BUnlimited+Blade+Works%5D+3%22+Enamel+Character+Pin&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">sold comps</a><a href="https://www.aliexpress.com/w/wholesale-%22Saber%22+Fate%2Fstay+night+%5BUnlimited+Blade+Works%5D+3%22+Enamel+Character+Pin.html" target="_blank" rel="noopener">AliExpress</a><a href="https://www.google.com/search?tbm=shop&q=%22Saber%22+Fate%2Fstay+night+%5BUnlimited+Blade+Works%5D+3%22+Enamel+Character+Pin" target="_blank" rel="noopener">Google Shopping</a></div>
+    </div></div>
+<div class="empty" id="empty" style="display:none">Nothing matches that filter.</div>
+</main>
+<script>
+const cards=[...document.querySelectorAll('.card')];
+function apply(f,w){let n=0;cards.forEach(c=>{
+  const ok=(f==='all'||c.dataset.verdict===f)&&(+(c.dataset.watch||0)>=w);
+  c.style.display=ok?'':'none'; if(ok)n++;});
+  document.getElementById('empty').style.display=n?'none':'block';}
+let f='all',w=0;
+document.querySelectorAll('.bar button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.bar button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); f=b.dataset.f; apply(f,w);});
+document.getElementById('minw').oninput=e=>{w=+e.target.value||0;apply(f,w);};
+</script></body></html>
