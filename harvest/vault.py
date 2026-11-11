@@ -17,7 +17,7 @@ def _money(v) -> str:
 def write(date: str | None = None) -> str:
     date = date or datetime.now().strftime("%Y-%m-%d")
     rows = store.select("op_scores?select=*&order=score.desc&limit=500")
-    items = {i["item_id"]: i for i in store.select("op_items?select=*&limit=5000")}
+    items = {i["item_id"]: i for i in store.select("op_items?select=*&state=eq.enriched&limit=5000")}
     niches = store.select("op_niches?select=*&order=keyword")
     merged = [{**r, **{k: (items.get(r["item_id"]) or {}).get(k) for k in
                        ("title", "price_usd", "watchers", "units_sold", "niche", "url", "seller", "quantity_n")}}
