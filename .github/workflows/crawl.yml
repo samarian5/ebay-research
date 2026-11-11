@@ -40,9 +40,11 @@ jobs:
 
       - name: Install Chrome (fallback lane only)
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq chromium-browser xvfb >/dev/null 2>&1 || \
-            sudo apt-get install -y -qq chromium xvfb >/dev/null 2>&1 || true
+          # Bounded: a slow apt mirror must never eat the whole 45-minute job.
+          # The browser lane is optional — crawl.py falls back to curl_cffi.
+          sudo timeout 120 apt-get update -qq || true
+          sudo timeout 240 apt-get install -y -qq chromium-browser xvfb >/dev/null 2>&1 || \
+            sudo timeout 240 apt-get install -y -qq chromium xvfb >/dev/null 2>&1 || true
           echo "BROWSER_BIN=$(command -v chromium-browser || command -v chromium || echo '')" >> "$GITHUB_ENV"
 
       - name: Crawl due keywords
