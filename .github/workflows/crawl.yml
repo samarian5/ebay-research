@@ -38,14 +38,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install Chrome (fallback lane only)
+      - name: Locate a browser (runner images already ship Chrome)
         run: |
-          # Bounded: a slow apt mirror must never eat the whole 45-minute job.
-          # The browser lane is optional — crawl.py falls back to curl_cffi.
-          sudo timeout 120 apt-get update -qq || true
-          sudo timeout 240 apt-get install -y -qq chromium-browser xvfb >/dev/null 2>&1 || \
-            sudo timeout 240 apt-get install -y -qq chromium xvfb >/dev/null 2>&1 || true
-          echo "BROWSER_BIN=$(command -v chromium-browser || command -v chromium || echo '')" >> "$GITHUB_ENV"
+          # The browser lane is optional (curl_cffi is lane 1), but when it is
+          # needed it must exist. GitHub's ubuntu image ships Google Chrome, so
+          # never wait on apt for Chromium — only xvfb, and only bounded.
+          sudo timeout 150 apt-get update -qq || true
+          sudo timeout 300 apt-get install -y -qq xvfb >/dev/null 2>&1 || true
+          for b in google-chrome google-chrome-stable chromium chromium-browser; do
+            p="$(command -v "$b" || true)"
+            if [ -n "$p" ]; then
+              echo "BROWSER_BIN=$p" >> "$GITHUB_ENV"
+              echo "browser: $p"
+              "$p" --version || true
+              break
+            fi
+          done
 
       - name: Crawl due keywords
         env:
