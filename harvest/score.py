@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import re
 from collections import defaultdict
 from datetime import datetime, timezone
 
@@ -37,9 +38,45 @@ def fee(price: float) -> float:
     return round(price * FEE_PCT + FEE_FIXED, 2)
 
 
+FAMILY_STOP = set("""new rare vintage lot set collectible collection pin pins card cards
+coin coins jewelry jewellery figure figures sports jersey display case box frame with for
+and the of a an in on to xl large small mini size free shipping gift handmade custom""".split())
+
+
 def tokens(title: str) -> set[str]:
-    return {t for t in "".join(c if c.isalnum() else " " for c in (title or "").lower()).split()
-            if len(t) > 2}
+    words = re.sub(r"[^a-z0-9 ]+", " ", (title or "").lower()).split()
+    return {w for w in words if len(w) > 2 and w not in FAMILY_STOP}
+
+
+def families(items: list[dict], jac_min: float = 0.55) -> dict[str, str]:
+    """Union-find over distinctive title tokens (Jaccard >= 0.55, >=2 shared).
+
+    A plain shared-token count chains unrelated products into one giant cluster
+    (an enamel pin landed in the same family as a Pokemon card through words like
+    'collectible'), so similarity is Jaccard over stop-worded tokens.
+    Competition is then measured over the whole pool, not the enriched sample.
+    """
+    toks = {it["item_id"]: tokens(it.get("title")) for it in items}
+    keys = [k for k in toks if toks[k]]
+    parent = {k: k for k in keys}
+
+    def find(a: str) -> str:
+        while parent[a] != a:
+            parent[a] = parent[parent[a]]
+            a = parent[a]
+        return a
+
+    for n, a in enumerate(keys):
+        ta = toks[a]
+        for b in keys[n + 1:]:
+            tb = toks[b]
+            inter = len(ta & tb)
+            if inter < 2 or inter / len(ta | tb) < jac_min:
+                continue
+            ra, rb = find(a), find(b)
+            if ra != rb:
+                parent[max(ra, rb)] = min(ra, rb)
+    return {k: find(k) for k in keys}
 
 
 def velocity(snaps: list[dict]) -> tuple[float | None, float | None, int]:
@@ -118,6 +155,8 @@ def score_item(it: dict, vibe: tuple, rivals: int) -> dict:
     commodity = next((c for c in COMMODITY if c in title), None)
     if commodity:
         reasons.append(f"commodity ({commodity}) — landed cost tracks spot, not a 35% rule")
+        if action == "copy now":      # cannot value it ⇒ cannot claim "copy now"
+            action = "find source first"
     elif price and 20 <= price <= 250:
         profit_unit = round(price - fee(price) - price * SOURCING_RATIO, 2)
         if uday and uday > 0:
@@ -137,29 +176,27 @@ def score_item(it: dict, vibe: tuple, rivals: int) -> dict:
             "est_profit_month": profit_month, "reasons": reasons}
 
 
-def run(limit: int = 2000) -> dict:
+def run(limit: int = 4000) -> dict:
     items = store.select(f"op_items?select=*&state=eq.enriched&limit={limit}")
+    pool = store.select("op_items?select=item_id,niche,title,state&limit=50000")
+    fam = families(pool)
+    fam_size = {}
+    for iid, fid in fam.items():
+        fam_size[fid] = fam_size.get(fid, 0) + 1
     snaps = store.select("op_snapshots?select=item_id,captured_at,watchers,units_sold&order=captured_at.asc&limit=20000")
     by_item: dict[str, list[dict]] = defaultdict(list)
     for s in snaps:
         by_item[s["item_id"]].append(s)
 
-    # rivals: near-duplicate titles inside the same niche
-    by_niche: dict[str, list[dict]] = defaultdict(list)
+    rows = []
     for it in items:
-        by_niche[it.get("niche") or "-"].append(it)
-    rival_count: dict[str, int] = {}
-    for group in by_niche.values():
-        toks = {it["item_id"]: tokens(it.get("title")) for it in group}
-        for it in group:
-            a = toks[it["item_id"]]
-            rival_count[it["item_id"]] = sum(
-                1 for other in group
-                if other["item_id"] != it["item_id"] and len(a & toks[other["item_id"]]) >= 3
-            )
-
-    rows = [score_item(it, velocity(by_item.get(it["item_id"], [])), rival_count.get(it["item_id"], 0))
-            for it in items]
+        fid = fam.get(it["item_id"], it["item_id"])
+        rivals = max(0, fam_size.get(fid, 1) - 1)
+        r = score_item(it, velocity(by_item.get(it["item_id"], [])), rivals)
+        r["family_id"] = fid
+        r["family_size"] = fam_size.get(fid, 1)
+        r["rubric_version"] = "2026-11-12.1"
+        rows.append(r)
     for r in rows:
         r["scored_at"] = datetime.now(timezone.utc).isoformat()
         r["reasons"] = r["reasons"]          # jsonb accepts a list
