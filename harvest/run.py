@@ -135,7 +135,9 @@ def enrich(keyword: str, limit: int, fetcher: Fetcher, run_id: str, stale_hours:
                 stubs.append({"item_id": rid, "url": ITEM.format(id=rid), "niche": keyword,
                               "source": "related", "depth": depth + 1, "state": "new"})
             if stubs:
-                new_stubs += store.upsert("op_items", stubs, "item_id")
+                # ignore-duplicates: a related stub must never reset an item that
+                # is already enriched back to "new" (that silently discarded work)
+                new_stubs += store.upsert("op_items", stubs, "item_id", ignore_duplicates=True)
                 store.upsert("op_edges", [{"src_item": item_id, "dst_item": s["item_id"],
                                            "niche": keyword, "depth": depth + 1} for s in stubs],
                              "src_item,dst_item")
