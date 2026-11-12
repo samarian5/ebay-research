@@ -52,7 +52,8 @@ def card(r: dict) -> str:
     <div class="card" data-verdict="{v}" data-niche="{html.escape(r.get('niche') or '')}" data-watch="{r.get('watchers') or 0}">
       <div class="row"><span class="pill {v}">{v}</span>
         <span class="pill">{html.escape(r.get('action') or '')}</span>
-        <span>score <b>{r.get('score')}</b></span></div>
+        <span>score <b>{r.get('score')}</b></span>
+        {(f"<span class=\"pill\">{r['_family_n']} in family</span>" if (r.get('_family_n') or 1) > 1 else "")}</div>
       <h3>{html.escape((r.get('title') or '')[:120])}</h3>
       <div class="row">
         <span><b>{money(r.get('price_usd'))}</b></span>
@@ -90,6 +91,14 @@ def build(out_path: str = "docs/opportunities.html") -> dict:
                        "qty": it.get("quantity_n"),
                        "_fee": round(price * 0.1325 + 0.30, 2) if price else None})
     merged.sort(key=lambda r: ((r.get("est_profit_month") or 0), r.get("score") or 0), reverse=True)
+    # one card per product family: 30 listings of the same case are one opportunity
+    best: dict[str, dict] = {}
+    for r in merged:
+        fid = r.get("family_id") or r["item_id"]
+        r["_family_n"] = r.get("family_size") or 1
+        if fid not in best:
+            best[fid] = r
+    merged = list(best.values())
 
     by_verdict = {v: sum(1 for r in merged if r["verdict"] == v) for v in ("copy", "watch", "pass", "unmeasured")}
     niche_rows = []
@@ -104,12 +113,12 @@ def build(out_path: str = "docs/opportunities.html") -> dict:
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>eBay opportunities — Carson rubric</title><style>{CSS}</style></head><body>
 <header><h1>eBay opportunity board</h1>
-<div class="sub">Ranked with Carson Commerce's rubric (watchers ≥ 50 · 50–100 sold on one listing · ASP ≥ $30)
+<div class="sub">One card per product family · ranked with Carson Commerce's rubric (watchers ≥ 50 · 50–100 sold on one listing · ASP ≥ $30)
 · generated {datetime.now(timezone.utc):%Y-%m-%d %H:%M} UTC · {len(merged)} enriched listings</div></header>
 <div class="kpis">
-  <div class="kpi"><b>{by_verdict['copy']}</b><span>copy candidates</span></div>
+  <div class="kpi"><b>{by_verdict['copy']}</b><span>copy families</span></div>
   <div class="kpi"><b>{by_verdict['watch']}</b><span>watch</span></div>
-  <div class="kpi"><b>{len(merged)}</b><span>scored</span></div>
+  <div class="kpi"><b>{len(merged)}</b><span>product families</span></div>
   <div class="kpi"><b>{len(niches)}</b><span>niches</span></div>
   <div class="kpi"><b>{sum(1 for r in merged if r.get('est_profit_month'))}</b><span>with measured velocity</span></div>
 </div>
