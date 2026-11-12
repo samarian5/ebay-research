@@ -35,7 +35,8 @@ def rpc(fn: str, payload: dict, timeout: int = 90):
     return r.json() if r.text else None
 
 
-def upsert(table: str, rows: list[dict], conflict: str, chunk: int = 100, keep_nulls: bool = False) -> int:
+def upsert(table: str, rows: list[dict], conflict: str, chunk: int = 100, keep_nulls: bool = False,
+           ignore_duplicates: bool = False) -> int:
     if not rows:
         return 0
     n = 0
@@ -50,8 +51,9 @@ def upsert(table: str, rows: list[dict], conflict: str, chunk: int = 100, keep_n
     for part_all in groups.values():
         for i in range(0, len(part_all), chunk):
             part = part_all[i:i + chunk]
+            res = "ignore-duplicates" if ignore_duplicates else "merge-duplicates"
             r = requests.post(f"{URL}/rest/v1/{table}?on_conflict={conflict}",
-                              headers=_headers({"Prefer": "resolution=merge-duplicates,return=minimal"}),
+                              headers=_headers({"Prefer": f"resolution={res},return=minimal"}),
                               data=json.dumps(part), timeout=120)
             if r.status_code >= 300:
                 raise RuntimeError(f"upsert {table} -> {r.status_code}: {r.text[:300]}")
@@ -84,16 +86,35 @@ def insert(table: str, rows: list[dict], chunk: int = 200) -> int:
     return n
 
 
+STABLE_ORDER = {"op_items": "item_id", "op_scores": "item_id",
+                "op_snapshots": "item_id,captured_at", "op_edges": "src_id"}
+
+
 def select(path: str, page: int = 1000) -> list[dict]:
-    """Paginated read. PostgREST silently caps at 1,000 rows, so a plain GET
-    quietly loses data once a table grows past it (which it did)."""
+    """Paginated read.
+
+    PostgREST caps a response at 1,000 rows regardless of ?limit=, so a plain GET
+    silently loses data once a table passes that (op_items did). Two details are
+    required for correctness: the caller's ?limit= must not cap the window, and an
+    unordered range query can repeat or skip rows across pages, so a stable order
+    is added when the caller did not supply one.
+    """
+    table = path.split("?")[0].strip("/")
+    qs = path.split("?", 1)[1] if "?" in path else ""
+    parts = [q for q in qs.split("&") if q and not q.startswith("limit=")]
+    if not any(q.startswith("order=") for q in parts) and table in STABLE_ORDER:
+        parts.append(f"order={STABLE_ORDER[table]}")
+    base = f"{URL}/rest/v1/{table}" + ("?" + "&".join(parts) if parts else "")
+
     out: list[dict] = []
     start = 0
     while True:
-        r = requests.get(f"{URL}/rest/v1/{path}", headers=_headers({
+        r = requests.get(base, headers=_headers({
             "Range": f"{start}-{start + page - 1}",
             "Range-Unit": "items",
         }), timeout=90)
+        if r.status_code == 416:        # asked past the end: a normal stop, not an error
+            return out
         if r.status_code >= 300:
             raise RuntimeError(f"select {path} -> {r.status_code}: {r.text[:200]}")
         part = r.json()
