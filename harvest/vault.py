@@ -22,6 +22,15 @@ def write(date: str | None = None) -> str:
     merged = [{**r, **{k: (items.get(r["item_id"]) or {}).get(k) for k in
                        ("title", "price_usd", "watchers", "units_sold", "niche", "url", "seller", "quantity_n")}}
               for r in rows if r["item_id"] in items]
+    seen: set[str] = set()
+    deduped = []
+    for r in merged:
+        fid = r.get("family_id") or r["item_id"]
+        if fid in seen:
+            continue
+        seen.add(fid)
+        deduped.append(r)
+    merged = deduped
     merged.sort(key=lambda r: ((r.get("est_profit_month") or 0), r.get("score") or 0), reverse=True)
 
     copy = [r for r in merged if r["verdict"] == "copy"]
