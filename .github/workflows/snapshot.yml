@@ -1,0 +1,39 @@
+name: ebay-snapshot
+
+# Velocity needs two observations of the same listing; a single page view cannot
+# produce units/day. This pass re-captures the highest-watcher items so the
+# monthly-profit column stops being blank.
+
+on:
+  schedule:
+    - cron: "40 */2 * * *"
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: items re-captured per niche
+        default: "20"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ebay-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Snapshot
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          python -m harvest.run snapshot --limit "${{ github.event.inputs.limit || 20 }}" --no-direct
