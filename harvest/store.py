@@ -21,6 +21,13 @@ def _headers(extra: dict | None = None) -> dict:
     return h
 
 
+def delete(path: str) -> int:
+    r = requests.delete(f"{URL}/rest/v1/{path}", headers=_headers({"Prefer": "return=minimal"}), timeout=60)
+    if r.status_code >= 300:
+        raise RuntimeError(f"delete {path} -> {r.status_code}: {r.text[:200]}")
+    return r.status_code
+
+
 def rpc(fn: str, payload: dict, timeout: int = 90):
     r = requests.post(f"{URL}/rest/v1/rpc/{fn}", headers=_headers(), data=json.dumps(payload), timeout=timeout)
     if r.status_code >= 300:
@@ -77,8 +84,20 @@ def insert(table: str, rows: list[dict], chunk: int = 200) -> int:
     return n
 
 
-def select(path: str) -> list[dict]:
-    r = requests.get(f"{URL}/rest/v1/{path}", headers=_headers(), timeout=60)
-    if r.status_code >= 300:
-        raise RuntimeError(f"select {path} -> {r.status_code}: {r.text[:200]}")
-    return r.json()
+def select(path: str, page: int = 1000) -> list[dict]:
+    """Paginated read. PostgREST silently caps at 1,000 rows, so a plain GET
+    quietly loses data once a table grows past it (which it did)."""
+    out: list[dict] = []
+    start = 0
+    while True:
+        r = requests.get(f"{URL}/rest/v1/{path}", headers=_headers({
+            "Range": f"{start}-{start + page - 1}",
+            "Range-Unit": "items",
+        }), timeout=90)
+        if r.status_code >= 300:
+            raise RuntimeError(f"select {path} -> {r.status_code}: {r.text[:200]}")
+        part = r.json()
+        out.extend(part)
+        if len(part) < page:
+            return out
+        start += page
