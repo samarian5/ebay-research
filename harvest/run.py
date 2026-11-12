@@ -85,11 +85,16 @@ def enrich(keyword: str, limit: int, fetcher: Fetcher, run_id: str) -> dict:
     log(f"  claimed {len(claimed)} items")
     ok = blocked = failed = new_stubs = 0
 
+    streak = 0
     for n, item in enumerate(claimed, 1):
         item_id = item["item_id"]
         f = fetcher.get(ITEM.format(id=item_id))
         if f.blocked:
             blocked += 1
+            streak += 1
+            if streak >= 3:
+                log(f"  quota exhausted ({f.blocked}) — stopping this niche early")
+                break
             store.update("op_items", f"item_id=eq.{item_id}",
                          {"attempts": int(item.get("attempts") or 0) + 1, "last_error": f.blocked})
             log(f"  [{n}/{len(claimed)}] {item_id} blocked ({f.blocked})")
@@ -131,6 +136,7 @@ def enrich(keyword: str, limit: int, fetcher: Fetcher, run_id: str) -> dict:
                 store.upsert("op_edges", [{"src_item": item_id, "dst_item": s["item_id"],
                                            "niche": keyword, "depth": depth + 1} for s in stubs],
                              "src_item,dst_item")
+        streak = 0
         ok += 1
         if n % 10 == 0:
             log(f"  [{n}/{len(claimed)}] ok={ok} blocked={blocked} stubs+={new_stubs}")
@@ -162,6 +168,9 @@ def all_niches(pages: int, limit: int | None, fetcher: Fetcher) -> dict:
                                   "note": f"{time.time() - t0:.0f}s"}], "run_id")
         for k in total:
             total[k] += res.get(k, 0)
+        if e.get("blocked", 0) >= 3 and e.get("ok", 0) == 0:
+            log("quota exhausted across the batch — stopping early")
+            break
     return total
 
 
