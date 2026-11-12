@@ -19,6 +19,8 @@ Design notes
 """
 from __future__ import annotations
 
+import json
+
 import argparse
 import sys
 import time
@@ -76,12 +78,13 @@ def discover(keyword: str, pages: int, fetcher: Fetcher, run_id: str) -> dict:
 
 
 # --------------------------------------------------------------- enrichment
-def enrich(keyword: str, limit: int, fetcher: Fetcher, run_id: str) -> dict:
+def enrich(keyword: str, limit: int, fetcher: Fetcher, run_id: str, stale_hours: int = 36) -> dict:
     niche = niche_row(keyword) or {}
     tokens = niche.get("tokens") or []
     max_depth = int(niche.get("depth") or 2)
 
-    claimed = store.rpc("op_claim_items", {"p_niche": keyword, "p_limit": limit})
+    claimed = store.rpc("op_claim_items", {"p_niche": keyword, "p_limit": limit,
+                                          "p_stale_hours": stale_hours})
     log(f"  claimed {len(claimed)} items")
     ok = blocked = failed = new_stubs = 0
 
@@ -146,6 +149,37 @@ def enrich(keyword: str, limit: int, fetcher: Fetcher, run_id: str) -> dict:
 
 
 # --------------------------------------------------------------------- stats
+def snapshot(limit: int, fetcher: Fetcher, only: str | None = None) -> dict:
+    """Re-capture already-known items to create a second observation.
+
+    Velocity (units/day, watchers/day) is the only measured input that cannot be
+    read from a single page — it needs two captures of the same listing. Claiming
+    with stale_hours=0 returns the highest-watcher items first, which is exactly
+    the band where a copy decision lives.
+    """
+    total = {"fetched": 0, "ok": 0, "blocked": 0, "failed": 0}
+    niches = [n for n in store.select("op_niches?select=*&order=keyword")
+              if only in (None, n["keyword"])]
+    for n in niches:
+        kw = n["keyword"]
+        run_id = f"s-{datetime.now(timezone.utc):%Y%m%dT%H%M%S}-{uuid.uuid4().hex[:4]}"
+        store.upsert("op_runs", [{"run_id": run_id, "niche": kw, "lane": "snapshot",
+                                  "started_at": now()}], "run_id")
+        log(f"[snapshot] {kw}")
+        t0 = time.time()
+        res = enrich(kw, limit, fetcher, run_id, stale_hours=0)
+        store.upsert("op_runs", [{"run_id": run_id, "finished_at": now(),
+                                  "fetched": res.get("fetched", 0), "ok": res.get("ok", 0),
+                                  "blocked": res.get("blocked", 0), "failed": res.get("failed", 0),
+                                  "note": f"{time.time() - t0:.0f}s"}], "run_id")
+        for k in total:
+            total[k] += res.get(k, 0)
+        if res.get("blocked", 0) >= 3 and res.get("ok", 0) == 0:
+            log("quota exhausted across the batch — stopping early")
+            break
+    return total
+
+
 def all_niches(pages: int, limit: int | None, fetcher: Fetcher) -> dict:
     """One pass over every enabled niche, honouring each niche's per_run budget."""
     niches = store.select("op_niches?enabled=is.true&select=keyword,per_run,depth&order=priority.desc,keyword")
@@ -211,9 +245,18 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--limit", type=int, default=0, help="override per-niche cap (0 = use niche setting)")
     p.add_argument("--no-direct", action="store_true")
 
+    p = sub.add_parser("snapshot")
+    p.add_argument("--limit", type=int, default=20, help="items re-captured per niche")
+    p.add_argument("--niche", default=None)
+    p.add_argument("--no-direct", action="store_true")
+
     sub.add_parser("stats")
     args = ap.parse_args(argv)
 
+    if args.cmd == "snapshot":
+        fetcher = Fetcher(direct_first=not args.no_direct)
+        print(json.dumps(snapshot(args.limit, fetcher, args.niche)))
+        return 0
     if args.cmd == "stats":
         stats(); return 0
     if args.cmd == "all":
