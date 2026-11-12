@@ -76,3 +76,32 @@ class Ranking(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_families_do_not_chain_unrelated_products():
+    """Regression: shared-token counting merged an enamel pin with a Pokemon card
+    into one 894-item family, which silently destroyed the competition metric."""
+    from harvest.score import families
+
+    items = [
+        {"item_id": "a", "title": "Sabastian Michaelis Black Butler Collectible Enamel Pin"},
+        {"item_id": "b", "title": "Bubble Arcanine Special Doujin Art Starry Holo Pokemon Card"},
+        {"item_id": "c", "title": "Naruto Shippuden Kakashi Collectible Enamel Pin Anime Brooch"},
+    ]
+    fam = families(items)
+    # three different products: different franchise, different category
+    assert fam["b"] != fam["a"], "a trading card must not join a pin family"
+    assert fam["c"] != fam["a"], "pins of different franchises are not one product"
+
+
+def test_families_group_variants_of_one_product():
+    from harvest.score import families
+
+    items = [
+        {"item_id": "1", "title": 'Sports Jersey Display Case Frame Shadow Box 24"x36" UV Protection'},
+        {"item_id": "2", "title": 'Sports Jersey Display Case Frame Shadow Box 24"x36" UV Protection Black'},
+        {"item_id": "3", "title": "Junk Silver Coins $1 Face Value Mixed Average Circulated"},
+    ]
+    fam = families(items)
+    assert fam["1"] == fam["2"]
+    assert fam["3"] not in (fam["1"],)
